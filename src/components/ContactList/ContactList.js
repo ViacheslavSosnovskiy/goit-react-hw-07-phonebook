@@ -1,11 +1,12 @@
 import s from "./contact.module.css";
-import {useSelector, useDispatch} from 'react-redux'
-import {deleteContact} from '../../redux/contacts/contacts-operations'
-import { getVisibleContacts } from "../../redux/contacts/contacts-selectors";
+// import {useSelector, useDispatch} from 'react-redux'
+import Loader from "react-loader-spinner";
+import "react-loader-spinner/dist/loader/css/react-spinner-loader.css";
+// import {useSelector} from 'react-redux'
+import {useDeleteContactMutation} from '../../redux/contacts/contactSlice';
 
-export default function ContactList() {
-  const contacts = useSelector(getVisibleContacts)
-  const dispatch = useDispatch()
+export default function ContactList({contacts}) {
+  const [deleteContact, {isLoading: isDeleting}] = useDeleteContactMutation()
 
   
   return (
@@ -14,8 +15,16 @@ export default function ContactList() {
         <li key={contact.id} {...contact} className={s.item}>
            <p className={s.name}>{contact.name}</p>
            <p>{contact.number}</p>
-           <button className={s.button} onClick={() => dispatch(deleteContact(contact.id))}>
+           <button className={s.button} onClick={() => deleteContact(contact.id)} disabled={isDeleting}>
         Delete
+        {isDeleting && (
+          <Loader
+            type="ThreeDots"
+            color="#000000"
+            height={12}
+            width={12}
+            />
+        )}
       </button>
         </li>
       ))}
